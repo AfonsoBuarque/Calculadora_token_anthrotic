@@ -292,6 +292,23 @@ body {
     font-size: 1.1rem;
 }
 
+.cost-item.brl-margin {
+    background: #fef3c7;
+    padding: 12px;
+    border-radius: 8px;
+    font-weight: 700;
+    border: 2px solid #f59e0b;
+}
+
+.cost-item.brl-margin span:first-child {
+    color: #92400e;
+}
+
+.cost-item.brl-margin span:last-child {
+    color: #d97706;
+    font-size: 1.1rem;
+}
+
 /* Additional Info */
 .additional-info {
     display: grid;

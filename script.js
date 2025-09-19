@@ -1,18 +1,19 @@
 // Configurações e constantes
-const USD_TO_BRL = 6.00;
+const USD_TO_BRL = 7.00;
 
-// Preços por modelo (em USD por 1M tokens) - com margem x3
+// Preços por modelo (em USD por 1M tokens) - preços oficiais da API
 const pricing = {
-    'claude-opus-4.1': { input: 45.00, output: 225.00 },
-    'claude-opus-4': { input: 45.00, output: 225.00 },
-    'claude-sonnet-4': { input: 9.00, output: 45.00 },
-    'claude-sonnet-3.7': { input: 9.00, output: 45.00 },
-    'claude-3-5-sonnet-20241022': { input: 9.00, output: 45.00 },
-    'claude-3-5-haiku-20241022': { input: 0.75, output: 3.75 }
+    'claude-opus-4.1': { input: 15.00, output: 75.00 },
+    'claude-opus-4': { input: 15.00, output: 75.00 },
+    'claude-sonnet-4': { input: 3.00, output: 15.00 },
+    'claude-sonnet-3.7': { input: 3.00, output: 15.00 },
+    'claude-3-5-sonnet-20241022': { input: 3.00, output: 15.00 },
+    'claude-3-5-haiku-20241022': { input: 0.25, output: 1.25 }
 };
 
 // Elementos DOM
 const modelSelect = document.getElementById('model-select');
+const marginSelect = document.getElementById('margin-select');
 const inputTokensInput = document.getElementById('input-tokens');
 const outputTokensInput = document.getElementById('output-tokens');
 const requestsInput = document.getElementById('requests');
@@ -26,11 +27,13 @@ const inputCostPerRequest = document.getElementById('input-cost-per-request');
 const outputCostPerRequest = document.getElementById('output-cost-per-request');
 const totalCostPerRequest = document.getElementById('total-cost-per-request');
 const totalCostPerRequestBrl = document.getElementById('total-cost-per-request-brl');
+const totalCostPerRequestBrlBase = document.getElementById('total-cost-per-request-brl-base');
 const totalRequestsTitle = document.getElementById('total-requests-title');
 const totalInputCost = document.getElementById('total-input-cost');
 const totalOutputCost = document.getElementById('total-output-cost');
 const totalCostUsd = document.getElementById('total-cost-usd');
 const totalCostBrl = document.getElementById('total-cost-brl');
+const totalCostBrlBase = document.getElementById('total-cost-brl-base');
 const totalTokensElement = document.getElementById('total-tokens');
 const tokenResult = document.getElementById('token-result');
 const scaleGrid = document.getElementById('scale-grid');
@@ -60,7 +63,7 @@ function formatCurrencyBRL(value) {
 function updatePricingInfo() {
     const selectedModel = modelSelect.value;
     const modelPricing = pricing[selectedModel];
-    pricingInfo.textContent = `Preços com margem: Input ${formatCurrency(modelPricing.input)}/1M tokens | Output ${formatCurrency(modelPricing.output)}/1M tokens`;
+    pricingInfo.textContent = `Preços oficiais: Input ${formatCurrency(modelPricing.input)}/1M tokens | Output ${formatCurrency(modelPricing.output)}/1M tokens`;
 }
 
 // Função principal de cálculo
@@ -111,16 +114,24 @@ function calculateCosts() {
 
 // Função para atualizar a exibição dos resultados
 function updateResultsDisplay(results) {
+    const margin = parseFloat(marginSelect.value) || 1;
+    
     inputCostPerRequest.textContent = formatCurrency(results.inputCostPerRequest);
     outputCostPerRequest.textContent = formatCurrency(results.outputCostPerRequest);
     totalCostPerRequest.textContent = formatCurrency(results.totalCostPerRequest);
-    totalCostPerRequestBrl.textContent = formatCurrencyBRL(results.totalCostPerRequest);
+    
+    // Custo base (sem margem)
+    totalCostPerRequestBrlBase.textContent = formatCurrencyBRL(results.totalCostPerRequest);
+    totalCostBrlBase.textContent = formatCurrencyBRL(results.totalCost);
+    
+    // Custo com margem
+    totalCostPerRequestBrl.textContent = formatCurrencyBRL(results.totalCostPerRequest * margin);
+    totalCostBrl.textContent = formatCurrencyBRL(results.totalCost * margin);
     
     totalRequestsTitle.textContent = `Total (${formatNumber(results.requestCount)} requests)`;
     totalInputCost.textContent = formatCurrency(results.totalInputCost);
     totalOutputCost.textContent = formatCurrency(results.totalOutputCost);
     totalCostUsd.textContent = formatCurrency(results.totalCost);
-    totalCostBrl.textContent = formatCurrencyBRL(results.totalCost);
     totalTokensElement.textContent = `${formatNumber(results.totalTokens)} tokens`;
 }
 
@@ -139,11 +150,13 @@ function hideResults() {
 // Função para atualizar projeções de escala
 function updateScaleProjections(baseData) {
     const scales = [10, 100, 1000, 10000];
+    const margin = parseFloat(marginSelect.value) || 1;
     scaleGrid.innerHTML = '';
     
     scales.forEach(scale => {
         const totalRequests = scale * baseData.requestCount;
         const totalCost = baseData.totalCostPerRequest * scale;
+        const totalCostWithMargin = totalCost * margin;
         const totalTokens = baseData.totalTokens * scale;
         
         const scaleCard = document.createElement('div');
@@ -151,7 +164,7 @@ function updateScaleProjections(baseData) {
         scaleCard.innerHTML = `
             <div class="requests">${formatNumber(totalRequests)} requests</div>
             <div class="usd-cost">${formatCurrency(totalCost)}</div>
-            <div class="brl-cost">${formatCurrencyBRL(totalCost)}</div>
+            <div class="brl-cost">${formatCurrencyBRL(totalCostWithMargin)}</div>
             <div class="tokens">${formatNumber(totalTokens)} tokens</div>
         `;
         
@@ -230,6 +243,11 @@ document.addEventListener('DOMContentLoaded', function() {
     modelSelect.addEventListener('change', function() {
         updatePricingInfo();
         calculateCosts();
+    });
+    
+    marginSelect.addEventListener('change', function() {
+        calculateCosts();
+        calculateBudget();
     });
     
     inputTokensInput.addEventListener('input', function() {
@@ -488,6 +506,7 @@ function calculateBudget() {
     const budgetBRL = parseFloat(budgetAmountInput.value);
     const selectedModel = budgetModelSelect.value;
     const ratio = tokenRatioSelect.value;
+    const margin = parseFloat(marginSelect.value) || 1;
     
     if (!budgetBRL || budgetBRL <= 0) {
         budgetResults.style.display = 'none';
@@ -495,8 +514,10 @@ function calculateBudget() {
         return;
     }
     
-    // Convert BRL to USD
-    const budgetUSD = budgetBRL / USD_TO_BRL;
+    // Convert BRL to USD, considering margin (budget is the final price with margin)
+    // So we need to calculate the base cost: budgetBRL / margin
+    const baseBudgetBRL = budgetBRL / margin;
+    const budgetUSD = baseBudgetBRL / USD_TO_BRL;
     
     // Get pricing for selected model
     const modelPricing = pricing[selectedModel];

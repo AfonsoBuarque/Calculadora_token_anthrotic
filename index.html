@@ -70,6 +70,27 @@
                     </div>
                 </div>
 
+                <!-- Seleção de Margem -->
+                <div class="form-group">
+                    <label for="margin-select">Margem de Lucro</label>
+                    <select id="margin-select">
+                        <option value="1">x1 (Sem margem)</option>
+                        <option value="2">x2 (100% margem)</option>
+                        <option value="3" selected>x3 (200% margem)</option>
+                        <option value="4">x4 (300% margem)</option>
+                        <option value="5">x5 (400% margem)</option>
+                        <option value="6">x6 (500% margem)</option>
+                        <option value="7">x7 (600% margem)</option>
+                        <option value="8">x8 (700% margem)</option>
+                        <option value="9">x9 (800% margem)</option>
+                        <option value="10">x10 (900% margem)</option>
+                    </select>
+                    <div class="info-text">
+                        <i class="fas fa-info-circle"></i>
+                        <span>Margem aplicada sobre o custo final em reais</span>
+                    </div>
+                </div>
+
                 <!-- Inputs -->
                 <div class="inputs-grid">
                     <div class="form-group">
@@ -113,7 +134,11 @@
                                     <span id="total-cost-per-request">$0.000000</span>
                                 </div>
                                 <div class="cost-item brl">
-                                    <span>Em Reais (R$):</span>
+                                    <span>Base (R$):</span>
+                                    <span id="total-cost-per-request-brl-base">R$ 0,00</span>
+                                </div>
+                                <div class="cost-item brl-margin">
+                                    <span>Com Margem (R$):</span>
                                     <span id="total-cost-per-request-brl">R$ 0,00</span>
                                 </div>
                             </div>
@@ -136,7 +161,11 @@
                                     <span id="total-cost-usd">$0.000000</span>
                                 </div>
                                 <div class="cost-item brl-highlight">
-                                    <span>Custo Total (R$):</span>
+                                    <span>Custo Base (R$):</span>
+                                    <span id="total-cost-brl-base">R$ 0,00</span>
+                                </div>
+                                <div class="cost-item brl-margin">
+                                    <span>Custo com Margem (R$):</span>
                                     <span id="total-cost-brl">R$ 0,00</span>
                                 </div>
                             </div>
@@ -151,7 +180,7 @@
                         </div>
                         <div class="info-item">
                             <span>Cotação Aplicada:</span>
-                            <span>1 USD = R$ 6,00</span>
+                            <span>1 USD = R$ 7,00</span>
                         </div>
                     </div>
                 </div>
