@@ -1,21 +1,9 @@
 {
-  "version": 2,
-  "name": "calculadora-anthropic-eleeva",
-  "builds": [
-    {
-      "src": "index.html",
-      "use": "@vercel/static"
-    }
-  ],
-  "rewrites": [
-    {
-      "source": "/(.*)",
-      "destination": "/index.html"
-    }
-  ],
+  "cleanUrls": true,
+  "trailingSlash": false,
   "headers": [
     {
-      "source": "/(.*)",
+      "source": "/(.*\\.(css|js|png|jpg|jpeg|gif|ico|svg|webp))",
       "headers": [
         {
           "key": "Cache-Control",
