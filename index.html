@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora de Custos API Anthropic | Eleeva IT</title>
+    <meta name="description" content="Calculadora profissional para estimar custos da API Anthropic Claude. Suporte a todos os modelos, conversão USD/BRL e estimativa de tokens.">
+    <meta name="keywords" content="anthropic, claude, api, calculadora, custos, tokens, eleeva it, ia, inteligência artificial">
+    <meta name="author" content="Eleeva IT">
+    <meta name="robots" content="index, follow">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://calculadora-anthropic-eleeva.vercel.app/">
+    <meta property="og:title" content="Calculadora de Custos API Anthropic | Eleeva IT">
+    <meta property="og:description" content="Calculadora profissional para estimar custos da API Anthropic Claude. Suporte a todos os modelos, conversão USD/BRL e estimativa de tokens.">
+    <meta property="og:image" content="https://calculadora-anthropic-eleeva.vercel.app/public/EleevaIT-AltaDefinicao.png">
+    
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://calculadora-anthropic-eleeva.vercel.app/">
+    <meta property="twitter:title" content="Calculadora de Custos API Anthropic | Eleeva IT">
+    <meta property="twitter:description" content="Calculadora profissional para estimar custos da API Anthropic Claude. Suporte a todos os modelos, conversão USD/BRL e estimativa de tokens.">
+    <meta property="twitter:image" content="https://calculadora-anthropic-eleeva.vercel.app/public/EleevaIT-AltaDefinicao.png">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="public/EleevaIT-AltaDefinicao.png">
+    <link rel="apple-touch-icon" href="public/EleevaIT-AltaDefinicao.png">
+    
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" crossorigin="anonymous">
+    
+    <!-- Preload critical resources -->
+    <link rel="preload" href="public/fundo_apresentacao_eleeva.png" as="image">
+    <link rel="preload" href="public/EleevaIT-AltaDefinicao.png" as="image">
+</head>
+<body>
+    <div class="container">
+        <div class="calculator-card">
+            <!-- Header -->
+            <div class="header">
+                <div class="header-content">
+                    <div class="logo-container">
+                        <img src="public/EleevaIT-AltaDefinicao.png" alt="Eleeva IT" class="logo">
+                    </div>
+                    <div class="header-text">
+                        <h1>Calculadora de Utilização</h1>
+                        <p>API Anthropic - Estimativa de Custos</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="content">
+                <!-- Seleção do Modelo -->
+                <div class="form-group">
+                    <label for="model-select">Modelo Claude</label>
+                    <select id="model-select">
+                        <option value="claude-opus-4.1">Claude Opus 4.1 (Mais Avançado)</option>
+                        <option value="claude-opus-4">Claude Opus 4</option>
+                        <option value="claude-sonnet-4" selected>Claude Sonnet 4 (Recomendado)</option>
+                        <option value="claude-sonnet-3.7">Claude Sonnet 3.7</option>
+                        <option value="claude-3-5-sonnet-20241022">Claude 3.5 Sonnet (Legacy)</option>
+                        <option value="claude-3-5-haiku-20241022">Claude 3.5 Haiku (Mais Econômico)</option>
+                    </select>
+                    <div class="info-text">
+                        <i class="fas fa-info-circle"></i>
+                        <span id="pricing-info">Preços com margem: Input $9.00/1M tokens | Output $45.00/1M tokens</span>
+                        <span class="update-badge">Atualizado 2025</span>
+                    </div>
+                </div>
+
+                <!-- Inputs -->
+                <div class="inputs-grid">
+                    <div class="form-group">
+                        <label for="input-tokens">Tokens de Input</label>
+                        <input type="number" id="input-tokens" placeholder="Ex: 1000">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="output-tokens">Tokens de Output</label>
+                        <input type="number" id="output-tokens" placeholder="Ex: 500">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="requests">Número de Requests</label>
+                        <input type="number" id="requests" placeholder="Ex: 100" min="1" value="1">
+                    </div>
+                </div>
+
+                <!-- Resultados -->
+                <div id="results" class="results-section" style="display: none;">
+                    <div class="results-header">
+                        <i class="fas fa-chart-bar"></i>
+                        <h2>Estimativa de Custos</h2>
+                    </div>
+                    
+                    <div class="results-grid">
+                        <!-- Custo por Request -->
+                        <div class="result-card">
+                            <h3>Por Request</h3>
+                            <div class="cost-details">
+                                <div class="cost-item">
+                                    <span>Custo Input:</span>
+                                    <span id="input-cost-per-request">$0.000000</span>
+                                </div>
+                                <div class="cost-item">
+                                    <span>Custo Output:</span>
+                                    <span id="output-cost-per-request">$0.000000</span>
+                                </div>
+                                <div class="cost-item total">
+                                    <span>Total por Request:</span>
+                                    <span id="total-cost-per-request">$0.000000</span>
+                                </div>
+                                <div class="cost-item brl">
+                                    <span>Em Reais (R$):</span>
+                                    <span id="total-cost-per-request-brl">R$ 0,00</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Custo Total -->
+                        <div class="result-card">
+                            <h3 id="total-requests-title">Total (1 requests)</h3>
+                            <div class="cost-details">
+                                <div class="cost-item">
+                                    <span>Total Input:</span>
+                                    <span id="total-input-cost">$0.000000</span>
+                                </div>
+                                <div class="cost-item">
+                                    <span>Total Output:</span>
+                                    <span id="total-output-cost">$0.000000</span>
+                                </div>
+                                <div class="cost-item total">
+                                    <span>Custo Total (USD):</span>
+                                    <span id="total-cost-usd">$0.000000</span>
+                                </div>
+                                <div class="cost-item brl-highlight">
+                                    <span>Custo Total (R$):</span>
+                                    <span id="total-cost-brl">R$ 0,00</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Informações Adicionais -->
+                    <div class="additional-info">
+                        <div class="info-item">
+                            <span>Total de Tokens Processados:</span>
+                            <span id="total-tokens">0 tokens</span>
+                        </div>
+                        <div class="info-item">
+                            <span>Cotação Aplicada:</span>
+                            <span>1 USD = R$ 6,00</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Guia de Estimativa de Tokens -->
+                <div class="guide-section">
+                    <h3>
+                        <i class="fas fa-info-circle"></i>
+                        Guia para Estimativa de Tokens
+                    </h3>
+                    
+                    <div class="guide-grid">
+                        <div class="guide-column">
+                            <h4>Tokens de Input (Perguntas)</h4>
+                            <div class="guide-items">
+                                <div class="guide-item">
+                                    <span>Pergunta curta (20 palavras):</span>
+                                    <span>~30-40 tokens</span>
+                                </div>
+                                <div class="guide-item">
+                                    <span>Pergunta média (50 palavras):</span>
+                                    <span>~75-100 tokens</span>
+                                </div>
+                                <div class="guide-item">
+                                    <span>Pergunta longa (100 palavras):</span>
+                                    <span>~150-200 tokens</span>
+                                </div>
+                                <div class="guide-item">
+                                    <span>Com contexto/documentos:</span>
+                                    <span>+500-2000 tokens</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="guide-column">
+                            <h4>Tokens de Output (Respostas)</h4>
+                            <div class="guide-items">
+                                <div class="guide-item">
+                                    <span>Resposta simples/direta:</span>
+                                    <span>~50-150 tokens</span>
+                                </div>
+                                <div class="guide-item">
+                                    <span>Explicação média:</span>
+                                    <span>~200-500 tokens</span>
+                                </div>
+                                <div class="guide-item">
+                                    <span>Resposta detalhada:</span>
+                                    <span>~500-1000 tokens</span>
+                                </div>
+                                <div class="guide-item">
+                                    <span>Análise completa:</span>
+                                    <span>~1000-2000 tokens</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="tip-box">
+                        <p>
+                            <strong>Dica:</strong> Para calcular tokens de texto em português, use a fórmula: 
+                            <code>número de caracteres ÷ 2.5</code>
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Calculadora de Tokens -->
+                <div class="token-calculator">
+                    <h3>Calculadora de Tokens por Texto</h3>
+                    
+                    <div class="calculator-grid">
+                        <div class="calculator-input">
+                            <label for="sample-text">Cole um texto de exemplo</label>
+                            <textarea 
+                                id="sample-text" 
+                                placeholder="Cole aqui um exemplo de pergunta ou resposta típica do seu cliente..."
+                            ></textarea>
+                        </div>
+                        
+                        <div class="calculator-result">
+                            <label>Resultado</label>
+                            <div class="result-display">
+                                <div id="token-result" class="token-result-content">
+                                    Cole um texto ao lado para ver a estimativa de tokens
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Escalas de Uso -->
+                <div id="scale-projections" class="scale-section" style="display: none;">
+                    <h3>
+                        <i class="fas fa-dollar-sign"></i>
+                        Projeções de Escala
+                    </h3>
+                    <div class="scale-grid" id="scale-grid">
+                        <!-- Será preenchido dinamicamente -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

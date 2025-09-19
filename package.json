@@ -1,0 +1,31 @@
+{
+  "name": "calculadora-anthropic-eleeva",
+  "version": "1.2.0",
+  "description": "Calculadora de custos para API Anthropic com branding Eleeva IT",
+  "main": "index.html",
+  "scripts": {
+    "dev": "python -m http.server 8000",
+    "build": "echo 'Static site - no build needed'",
+    "start": "python -m http.server 8000",
+    "deploy": "vercel --prod",
+    "check": "node deploy-check.js",
+    "predeploy": "npm run check"
+  },
+  "keywords": [
+    "anthropic",
+    "claude",
+    "calculator",
+    "tokens",
+    "costs",
+    "eleeva-it"
+  ],
+  "author": "Eleeva IT",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/eleeva-it/calculadora-anthropic"
+  },
+  "homepage": "https://calculadora-anthropic-eleeva.vercel.app",
+  "devDependencies": {},
+  "dependencies": {}
+}
