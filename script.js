@@ -576,8 +576,363 @@ function addBudgetEventListeners() {
     tokenRatioSelect.addEventListener('change', calculateBudget);
 }
 
+// Commercial Dashboard Elements
+const presentationModeToggle = document.getElementById('presentation-mode');
+const commercialDashboard = document.getElementById('commercial-dashboard');
+const scenariosGrid = document.getElementById('scenarios-grid');
+const summaryCards = document.getElementById('summary-cards');
+
+// Charts variables
+let volumeChart, modelsChart, monthlyChart, tokenDistributionChart;
+
+// Commercial Dashboard Functions
+function togglePresentationMode() {
+    const isPresentation = presentationModeToggle.checked;
+    const body = document.body;
+    
+    if (isPresentation) {
+        body.classList.add('presentation-mode');
+        commercialDashboard.style.display = 'block';
+        generateCommercialDashboard();
+    } else {
+        body.classList.remove('presentation-mode');
+        commercialDashboard.style.display = 'none';
+    }
+}
+
+function generateCommercialDashboard() {
+    generateScenarios();
+    generateCharts();
+    generateExecutiveSummary();
+}
+
+function generateScenarios() {
+    const scenarios = [
+        {
+            name: 'Básico',
+            description: 'Ideal para pequenas empresas',
+            inputTokens: 10000,
+            outputTokens: 5000,
+            requests: 100,
+            model: 'claude-3-5-haiku-20241022'
+        },
+        {
+            name: 'Profissional',
+            description: 'Para empresas em crescimento',
+            inputTokens: 50000,
+            outputTokens: 25000,
+            requests: 500,
+            model: 'claude-sonnet-4'
+        },
+        {
+            name: 'Enterprise',
+            description: 'Para grandes corporações',
+            inputTokens: 200000,
+            outputTokens: 100000,
+            requests: 2000,
+            model: 'claude-opus-4'
+        }
+    ];
+
+    scenariosGrid.innerHTML = '';
+    
+    scenarios.forEach(scenario => {
+        const modelPricing = pricing[scenario.model];
+        const margin = parseFloat(marginSelect.value) || 1;
+        
+        const inputCost = (scenario.inputTokens / 1000000) * modelPricing.input;
+        const outputCost = (scenario.outputTokens / 1000000) * modelPricing.output;
+        const totalCostUSD = (inputCost + outputCost) * scenario.requests;
+        const totalCostBRL = totalCostUSD * USD_TO_BRL * margin;
+        const totalTokens = (scenario.inputTokens + scenario.outputTokens) * scenario.requests;
+        
+        const scenarioCard = document.createElement('div');
+        scenarioCard.className = 'scenario-card';
+        scenarioCard.innerHTML = `
+            <div class="scenario-title">${scenario.name}</div>
+            <div class="scenario-details">
+                <div class="scenario-detail">
+                    <span class="scenario-label">Descrição:</span>
+                    <span class="scenario-value">${scenario.description}</span>
+                </div>
+                <div class="scenario-detail">
+                    <span class="scenario-label">Tokens Mensais:</span>
+                    <span class="scenario-value">${formatNumber(totalTokens)}</span>
+                </div>
+                <div class="scenario-detail">
+                    <span class="scenario-label">Requests:</span>
+                    <span class="scenario-value">${formatNumber(scenario.requests)}</span>
+                </div>
+                <div class="scenario-detail">
+                    <span class="scenario-label">Modelo:</span>
+                    <span class="scenario-value">${getModelDisplayName(scenario.model)}</span>
+                </div>
+                <div class="scenario-detail">
+                    <span class="scenario-label">Investimento Mensal:</span>
+                    <span class="scenario-value">${formatCurrencyBRL(totalCostUSD)}</span>
+                </div>
+            </div>
+        `;
+        
+        scenariosGrid.appendChild(scenarioCard);
+    });
+}
+
+function getModelDisplayName(modelKey) {
+    const modelNames = {
+        'claude-opus-4.1': 'Claude Opus 4.1',
+        'claude-opus-4': 'Claude Opus 4',
+        'claude-sonnet-4': 'Claude Sonnet 4',
+        'claude-sonnet-3.7': 'Claude Sonnet 3.7',
+        'claude-3-5-sonnet-20241022': 'Claude 3.5 Sonnet',
+        'claude-3-5-haiku-20241022': 'Claude 3.5 Haiku'
+    };
+    return modelNames[modelKey] || modelKey;
+}
+
+function generateCharts() {
+    generateVolumeChart();
+    generateModelsChart();
+    generateMonthlyChart();
+    generateTokenDistributionChart();
+}
+
+function generateVolumeChart() {
+    const ctx = document.getElementById('volumeChart').getContext('2d');
+    
+    if (volumeChart) {
+        volumeChart.destroy();
+    }
+    
+    const volumes = [10000, 50000, 100000, 500000, 1000000];
+    const costs = volumes.map(vol => {
+        const modelPricing = pricing['claude-sonnet-4'];
+        const margin = parseFloat(marginSelect.value) || 1;
+        const cost = ((vol * 0.6 / 1000000) * modelPricing.input + (vol * 0.4 / 1000000) * modelPricing.output) * USD_TO_BRL * margin;
+        return cost;
+    });
+    
+    volumeChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: volumes.map(v => formatNumber(v) + ' tokens'),
+            datasets: [{
+                label: 'Custo (R$)',
+                data: costs,
+                borderColor: '#3b82f6',
+                backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                tension: 0.4,
+                fill: true
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    display: false
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        callback: function(value) {
+                            return 'R$ ' + value.toFixed(2);
+                        }
+                    }
+                }
+            }
+        }
+    });
+}
+
+function generateModelsChart() {
+    const ctx = document.getElementById('modelsChart').getContext('2d');
+    
+    if (modelsChart) {
+        modelsChart.destroy();
+    }
+    
+    const models = ['claude-3-5-haiku-20241022', 'claude-sonnet-4', 'claude-opus-4'];
+    const margin = parseFloat(marginSelect.value) || 1;
+    const costs = models.map(model => {
+        const modelPricing = pricing[model];
+        const cost = ((50000 * 0.6 / 1000000) * modelPricing.input + (50000 * 0.4 / 1000000) * modelPricing.output) * USD_TO_BRL * margin;
+        return cost;
+    });
+    
+    modelsChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: models.map(m => getModelDisplayName(m)),
+            datasets: [{
+                label: 'Custo para 50k tokens (R$)',
+                data: costs,
+                backgroundColor: ['#10b981', '#3b82f6', '#8b5cf6'],
+                borderRadius: 8
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    display: false
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        callback: function(value) {
+                            return 'R$ ' + value.toFixed(2);
+                        }
+                    }
+                }
+            }
+        }
+    });
+}
+
+function generateMonthlyChart() {
+    const ctx = document.getElementById('monthlyChart').getContext('2d');
+    
+    if (monthlyChart) {
+        monthlyChart.destroy();
+    }
+    
+    const months = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun'];
+    const baseCost = 150; // Base cost in BRL
+    const margin = parseFloat(marginSelect.value) || 1;
+    const growth = [1, 1.2, 1.5, 1.8, 2.1, 2.5]; // Growth multiplier
+    
+    const costs = growth.map(g => baseCost * g * margin);
+    
+    monthlyChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: months,
+            datasets: [{
+                label: 'Projeção de Custos (R$)',
+                data: costs,
+                borderColor: '#059669',
+                backgroundColor: 'rgba(5, 150, 105, 0.1)',
+                tension: 0.4,
+                fill: true
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    display: false
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        callback: function(value) {
+                            return 'R$ ' + value.toFixed(0);
+                        }
+                    }
+                }
+            }
+        }
+    });
+}
+
+function generateTokenDistributionChart() {
+    const ctx = document.getElementById('tokenDistributionChart').getContext('2d');
+    
+    if (tokenDistributionChart) {
+        tokenDistributionChart.destroy();
+    }
+    
+    const inputTokens = parseInt(inputTokensInput.value) || 30000;
+    const outputTokens = parseInt(outputTokensInput.value) || 20000;
+    
+    tokenDistributionChart = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+            labels: ['Tokens de Input', 'Tokens de Output'],
+            datasets: [{
+                data: [inputTokens, outputTokens],
+                backgroundColor: ['#3b82f6', '#8b5cf6'],
+                borderWidth: 0
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'bottom'
+                }
+            }
+        }
+    });
+}
+
+function generateExecutiveSummary() {
+    const inputTokens = parseInt(inputTokensInput.value) || 30000;
+    const outputTokens = parseInt(outputTokensInput.value) || 20000;
+    const requests = parseInt(requestsInput.value) || 100;
+    const selectedModel = modelSelect.value;
+    const modelPricing = pricing[selectedModel];
+    const margin = parseFloat(marginSelect.value) || 1;
+    
+    const inputCost = (inputTokens / 1000000) * modelPricing.input;
+    const outputCost = (outputTokens / 1000000) * modelPricing.output;
+    const totalCostUSD = (inputCost + outputCost) * requests;
+    const totalCostBRL = totalCostUSD * USD_TO_BRL * margin;
+    const totalTokens = (inputTokens + outputTokens) * requests;
+    
+    const cards = [
+        {
+            title: 'Investimento Mensal',
+            value: formatCurrencyBRL(totalCostUSD).replace('R$', 'R$'),
+            description: 'Custo total estimado',
+            highlight: true
+        },
+        {
+            title: 'Tokens Processados',
+            value: formatNumber(totalTokens),
+            description: 'Total de tokens por mês'
+        },
+        {
+            title: 'Requests Mensais',
+            value: formatNumber(requests),
+            description: 'Número de requisições'
+        },
+        {
+            title: 'Modelo Recomendado',
+            value: getModelDisplayName(selectedModel),
+            description: 'Melhor custo-benefício'
+        }
+    ];
+    
+    summaryCards.innerHTML = '';
+    
+    cards.forEach(card => {
+        const cardElement = document.createElement('div');
+        cardElement.className = `summary-card ${card.highlight ? 'highlight' : ''}`;
+        cardElement.innerHTML = `
+            <h4>${card.title}</h4>
+            <div class="value">${card.value}</div>
+            <div class="description">${card.description}</div>
+        `;
+        
+        summaryCards.appendChild(cardElement);
+    });
+}
+
+// Event Listeners
+function addCommercialEventListeners() {
+    presentationModeToggle.addEventListener('change', togglePresentationMode);
+}
+
 // Inicializar validação em tempo real
 document.addEventListener('DOMContentLoaded', function() {
     addRealTimeValidation();
     addBudgetEventListeners();
+    addCommercialEventListeners();
 });

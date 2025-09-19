@@ -860,6 +860,318 @@ body {
     line-height: 1.5;
 }
 
+/* Mode Toggle */
+.mode-toggle {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    padding: 15px 30px;
+    text-align: center;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.toggle-container {
+    display: inline-flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.toggle-label {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+    user-select: none;
+}
+
+.toggle-input {
+    position: relative;
+    width: 60px;
+    height: 30px;
+    appearance: none;
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 15px;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.toggle-input:checked {
+    background: #10b981;
+}
+
+.toggle-input::before {
+    content: '';
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    width: 24px;
+    height: 24px;
+    background: white;
+    border-radius: 50%;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.toggle-input:checked::before {
+    transform: translateX(30px);
+}
+
+.toggle-text {
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+/* Commercial Dashboard */
+.commercial-section {
+    background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+    border-radius: 20px;
+    padding: 30px;
+    margin-top: 30px;
+    border: 2px solid #cbd5e1;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+}
+
+.commercial-header {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.commercial-header h2 {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    color: #1e293b;
+    font-size: 1.8rem;
+    font-weight: 700;
+    margin-bottom: 10px;
+}
+
+.commercial-header i {
+    color: #3b82f6;
+    font-size: 1.6rem;
+}
+
+.commercial-subtitle {
+    color: #64748b;
+    font-size: 1.1rem;
+    margin: 0;
+}
+
+/* Scenarios Section */
+.scenarios-section {
+    margin-bottom: 40px;
+}
+
+.scenarios-section h3 {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: #374151;
+    font-size: 1.3rem;
+    font-weight: 600;
+    margin-bottom: 25px;
+}
+
+.scenarios-section h3 i {
+    color: #8b5cf6;
+}
+
+.scenarios-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+}
+
+.scenario-card {
+    background: white;
+    border-radius: 15px;
+    padding: 25px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    border: 2px solid transparent;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.scenario-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #3b82f6, #8b5cf6, #ec4899);
+}
+
+.scenario-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    border-color: #3b82f6;
+}
+
+.scenario-title {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #1e293b;
+    margin-bottom: 15px;
+    text-align: center;
+}
+
+.scenario-details {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.scenario-detail {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+.scenario-detail:last-child {
+    border-bottom: none;
+    font-weight: 700;
+    color: #059669;
+    font-size: 1.1rem;
+}
+
+.scenario-label {
+    color: #64748b;
+    font-size: 0.9rem;
+}
+
+.scenario-value {
+    color: #1e293b;
+    font-weight: 600;
+}
+
+/* Charts Section */
+.charts-section {
+    margin-bottom: 40px;
+}
+
+.charts-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+    gap: 25px;
+}
+
+.chart-container {
+    background: white;
+    border-radius: 15px;
+    padding: 25px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    border: 1px solid #e2e8f0;
+}
+
+.chart-container h4 {
+    color: #374151;
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 20px;
+    text-align: center;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #f1f5f9;
+}
+
+.chart-container canvas {
+    max-height: 300px;
+}
+
+/* Executive Summary */
+.executive-summary h3 {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: #374151;
+    font-size: 1.3rem;
+    font-weight: 600;
+    margin-bottom: 25px;
+}
+
+.executive-summary h3 i {
+    color: #059669;
+}
+
+.summary-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+}
+
+.summary-card {
+    background: white;
+    border-radius: 12px;
+    padding: 20px;
+    text-align: center;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    border-left: 4px solid #3b82f6;
+}
+
+.summary-card.highlight {
+    border-left-color: #059669;
+    background: linear-gradient(135deg, #ecfdf5 0%, #f0fdf4 100%);
+}
+
+.summary-card h4 {
+    color: #374151;
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.summary-card .value {
+    color: #1e293b;
+    font-size: 1.8rem;
+    font-weight: 700;
+    margin-bottom: 5px;
+}
+
+.summary-card.highlight .value {
+    color: #059669;
+}
+
+.summary-card .description {
+    color: #64748b;
+    font-size: 0.85rem;
+}
+
+/* Presentation Mode Styles */
+.presentation-mode .cost-item.brl,
+.presentation-mode .cost-item.brl-highlight,
+.presentation-mode .cost-item.brl-margin {
+    display: none;
+}
+
+.presentation-mode .cost-item.total span:last-child {
+    display: none;
+}
+
+.presentation-mode .cost-item.total::after {
+    content: 'Consulte nossa equipe comercial';
+    color: #3b82f6;
+    font-weight: 600;
+    font-style: italic;
+}
+
+.presentation-mode #pricing-info {
+    display: none;
+}
+
+.presentation-mode .form-group:has(#margin-select) {
+    display: none;
+}
+
+.presentation-mode .additional-info {
+    display: none;
+}
+
 /* Responsive */
 @media (max-width: 768px) {
     .budget-grid {
