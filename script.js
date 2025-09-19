@@ -469,5 +469,94 @@ function addRealTimeValidation() {
     });
 }
 
+// Budget Calculator Elements
+const budgetAmountInput = document.getElementById('budget-amount');
+const budgetModelSelect = document.getElementById('budget-model');
+const tokenRatioSelect = document.getElementById('token-ratio');
+const budgetResults = document.getElementById('budget-results');
+const budgetPlaceholder = document.getElementById('budget-placeholder');
+const budgetDisplay = document.getElementById('budget-display');
+const budgetInputTokens = document.getElementById('budget-input-tokens');
+const budgetOutputTokens = document.getElementById('budget-output-tokens');
+const budgetTotalTokens = document.getElementById('budget-total-tokens');
+const shortConversations = document.getElementById('short-conversations');
+const mediumAnalyses = document.getElementById('medium-analyses');
+const longDocuments = document.getElementById('long-documents');
+
+// Budget Calculator Functions
+function calculateBudget() {
+    const budgetBRL = parseFloat(budgetAmountInput.value);
+    const selectedModel = budgetModelSelect.value;
+    const ratio = tokenRatioSelect.value;
+    
+    if (!budgetBRL || budgetBRL <= 0) {
+        budgetResults.style.display = 'none';
+        budgetPlaceholder.style.display = 'flex';
+        return;
+    }
+    
+    // Convert BRL to USD
+    const budgetUSD = budgetBRL / USD_TO_BRL;
+    
+    // Get pricing for selected model
+    const modelPricing = pricing[selectedModel];
+    
+    // Parse ratio (e.g., "2:1" -> [2, 1])
+    const [inputRatio, outputRatio] = ratio.split(':').map(Number);
+    const totalRatio = inputRatio + outputRatio;
+    
+    // Calculate weighted average cost per token
+    const inputWeight = inputRatio / totalRatio;
+    const outputWeight = outputRatio / totalRatio;
+    const avgCostPer1MTokens = (modelPricing.input * inputWeight) + (modelPricing.output * outputWeight);
+    
+    // Calculate total tokens possible
+    const totalTokensPossible = Math.floor((budgetUSD / avgCostPer1MTokens) * 1000000);
+    
+    // Calculate input and output tokens based on ratio
+    const inputTokens = Math.floor(totalTokensPossible * inputWeight);
+    const outputTokens = Math.floor(totalTokensPossible * outputWeight);
+    
+    // Update display
+    budgetDisplay.textContent = formatNumber(budgetBRL);
+    budgetInputTokens.textContent = formatNumber(inputTokens);
+    budgetOutputTokens.textContent = formatNumber(outputTokens);
+    budgetTotalTokens.textContent = formatNumber(totalTokensPossible);
+    
+    // Calculate scenarios
+    calculateScenarios(totalTokensPossible);
+    
+    // Show results
+    budgetResults.style.display = 'block';
+    budgetPlaceholder.style.display = 'none';
+}
+
+function calculateScenarios(totalTokens) {
+    // Scenario assumptions (input + output tokens per interaction)
+    const scenarios = {
+        short: 200,      // Short conversations: ~200 tokens total
+        medium: 800,     // Medium analyses: ~800 tokens total  
+        long: 2500       // Long documents: ~2500 tokens total
+    };
+    
+    const shortCount = Math.floor(totalTokens / scenarios.short);
+    const mediumCount = Math.floor(totalTokens / scenarios.medium);
+    const longCount = Math.floor(totalTokens / scenarios.long);
+    
+    shortConversations.textContent = `~${formatNumber(shortCount)} conversas`;
+    mediumAnalyses.textContent = `~${formatNumber(mediumCount)} análises`;
+    longDocuments.textContent = `~${formatNumber(longCount)} documentos`;
+}
+
+// Event Listeners for Budget Calculator
+function addBudgetEventListeners() {
+    budgetAmountInput.addEventListener('input', calculateBudget);
+    budgetModelSelect.addEventListener('change', calculateBudget);
+    tokenRatioSelect.addEventListener('change', calculateBudget);
+}
+
 // Inicializar validação em tempo real
-document.addEventListener('DOMContentLoaded', addRealTimeValidation);
+document.addEventListener('DOMContentLoaded', function() {
+    addRealTimeValidation();
+    addBudgetEventListeners();
+});
