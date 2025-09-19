@@ -1,15 +1,6 @@
-// Configurações e constantes
-const USD_TO_BRL = 7.00;
-
-// Preços por modelo (em USD por 1M tokens) - preços oficiais da API
-const pricing = {
-    'claude-opus-4.1': { input: 15.00, output: 75.00 },
-    'claude-opus-4': { input: 15.00, output: 75.00 },
-    'claude-sonnet-4': { input: 3.00, output: 15.00 },
-    'claude-sonnet-3.7': { input: 3.00, output: 15.00 },
-    'claude-3-5-sonnet-20241022': { input: 3.00, output: 15.00 },
-    'claude-3-5-haiku-20241022': { input: 0.25, output: 1.25 }
-};
+// Configurações (importadas do config.js)
+const USD_TO_BRL = CONFIG.USD_TO_BRL_RATE;
+const pricing = CONFIG.API_PRICING;
 
 // Elementos DOM
 const modelSelect = document.getElementById('model-select');
@@ -642,6 +633,7 @@ function generateScenarios() {
         
         const inputCost = (scenario.inputTokens / 1000000) * modelPricing.input;
         const outputCost = (scenario.outputTokens / 1000000) * modelPricing.output;
+        const costPerRequest = (inputCost + outputCost) * margin;
         const totalCostUSD = (inputCost + outputCost) * scenario.requests;
         const totalCostBRL = totalCostUSD * USD_TO_BRL * margin;
         const totalTokens = (scenario.inputTokens + scenario.outputTokens) * scenario.requests;
@@ -668,8 +660,12 @@ function generateScenarios() {
                     <span class="scenario-value">${getModelDisplayName(scenario.model)}</span>
                 </div>
                 <div class="scenario-detail">
+                    <span class="scenario-label">Valor por Requisição:</span>
+                    <span class="scenario-value">${formatCurrencyBRL(costPerRequest)}</span>
+                </div>
+                <div class="scenario-detail">
                     <span class="scenario-label">Investimento Mensal:</span>
-                    <span class="scenario-value">${formatCurrencyBRL(totalCostUSD)}</span>
+                    <span class="scenario-value">${formatCurrencyBRL(totalCostUSD * margin)}</span>
                 </div>
             </div>
         `;
@@ -889,7 +885,7 @@ function generateExecutiveSummary() {
     const cards = [
         {
             title: 'Investimento Mensal',
-            value: formatCurrencyBRL(totalCostUSD).replace('R$', 'R$'),
+            value: formatCurrencyBRL(totalCostUSD * margin).replace('R$', 'R$'),
             description: 'Custo total estimado',
             highlight: true
         },

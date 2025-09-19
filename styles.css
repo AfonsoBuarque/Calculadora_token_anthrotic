@@ -869,9 +869,11 @@ body {
 }
 
 .toggle-container {
-    display: inline-flex;
+    display: flex;
     align-items: center;
-    gap: 15px;
+    justify-content: center;
+    gap: 30px;
+    flex-wrap: wrap;
 }
 
 .toggle-label {
@@ -919,6 +921,40 @@ body {
 .toggle-text {
     font-size: 1rem;
     font-weight: 600;
+}
+
+.client-link {
+    display: flex;
+    align-items: center;
+}
+
+.client-button {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    text-decoration: none;
+    padding: 10px 20px;
+    border-radius: 25px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    backdrop-filter: blur(10px);
+}
+
+.client-button:hover {
+    background: rgba(255, 255, 255, 0.3);
+    border-color: rgba(255, 255, 255, 0.5);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    color: white;
+    text-decoration: none;
+}
+
+.client-button i {
+    font-size: 0.8rem;
 }
 
 /* Commercial Dashboard */
