@@ -529,6 +529,7 @@ function calculateBudget() {
     const inputTokens = Math.floor(totalTokensPossible * inputWeight);
     const outputTokens = Math.floor(totalTokensPossible * outputWeight);
     
+    
     // Update display
     budgetDisplay.textContent = formatNumber(budgetBRL);
     budgetInputTokens.textContent = formatNumber(inputTokens);
@@ -544,20 +545,21 @@ function calculateBudget() {
 }
 
 function calculateScenarios(totalTokens) {
-    // Scenario assumptions (input + output tokens per interaction)
+    // Cenários realistas baseados na página do cliente (input + output tokens por interação)
     const scenarios = {
-        short: 200,      // Short conversations: ~200 tokens total
-        medium: 800,     // Medium analyses: ~800 tokens total  
-        long: 2500       // Long documents: ~2500 tokens total
+        chat: 800,       // Chat Simples: 500 input + 300 output = 800 tokens
+        analysis: 3000,  // Análise de Dados: 2000 input + 1000 output = 3000 tokens  
+        support: 5000    // Suporte Técnico: 3000 input + 2000 output = 5000 tokens
     };
     
-    const shortCount = Math.floor(totalTokens / scenarios.short);
-    const mediumCount = Math.floor(totalTokens / scenarios.medium);
-    const longCount = Math.floor(totalTokens / scenarios.long);
+    const chatCount = Math.floor(totalTokens / scenarios.chat);
+    const analysisCount = Math.floor(totalTokens / scenarios.analysis);
+    const supportCount = Math.floor(totalTokens / scenarios.support);
     
-    shortConversations.textContent = `~${formatNumber(shortCount)} conversas`;
-    mediumAnalyses.textContent = `~${formatNumber(mediumCount)} análises`;
-    longDocuments.textContent = `~${formatNumber(longCount)} documentos`;
+    
+    shortConversations.textContent = `~${formatNumber(chatCount)} chats simples`;
+    mediumAnalyses.textContent = `~${formatNumber(analysisCount)} análises`;
+    longDocuments.textContent = `~${formatNumber(supportCount)} suportes`;
 }
 
 // Event Listeners for Budget Calculator

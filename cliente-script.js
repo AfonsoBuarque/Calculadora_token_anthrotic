@@ -61,6 +61,7 @@ document.addEventListener('DOMContentLoaded', function() {
         // Converter para BRL (sem margem, pois o cliente já pagou com margem)
         const costBRL = totalCostUSD * USD_TO_BRL;
         
+        
         return costBRL;
     }
 
@@ -72,6 +73,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const realCreditAmount = creditAmount / MARGIN;
         
         const possibleInteractions = Math.floor(realCreditAmount / costPerInteraction);
+        
         
         return {
             count: possibleInteractions,
