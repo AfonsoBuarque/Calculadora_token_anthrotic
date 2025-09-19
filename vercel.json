@@ -3,15 +3,19 @@
   "public": true,
   "builds": [
     {
-      "src": "index.html",
+      "src": "*.html",
       "use": "@vercel/static"
     },
     {
-      "src": "styles.css",
+      "src": "*.css",
       "use": "@vercel/static"
     },
     {
-      "src": "script.js",
+      "src": "*.js",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "*.md",
       "use": "@vercel/static"
     },
     {
@@ -20,6 +24,18 @@
     }
   ],
   "routes": [
+    {
+      "src": "/cliente.html",
+      "dest": "/cliente.html"
+    },
+    {
+      "src": "/index.html",
+      "dest": "/index.html"
+    },
+    {
+      "src": "/",
+      "dest": "/index.html"
+    },
     {
       "src": "/(.*)",
       "dest": "/$1"
