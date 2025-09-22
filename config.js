@@ -12,11 +12,11 @@
 
 // Margem padrão aplicada nos cálculos (multiplicador)
 // Exemplo: 3 = margem de 3x (cliente paga 3x o valor real)
-const DEFAULT_MARGIN = 3;
+const DEFAULT_MARGIN = 6;
 
 // Margem fixa para a página do cliente
 // Esta é a margem usada quando o cliente faz recarga de créditos
-const CLIENT_PAGE_MARGIN = 3;
+const CLIENT_PAGE_MARGIN = 6;
 
 // Opções de margem disponíveis no dropdown da interface principal
 // Formato: { valor: "texto_exibido" }
